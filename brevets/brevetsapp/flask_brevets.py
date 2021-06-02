@@ -14,6 +14,7 @@ import logging
 import os
 from pymongo import MongoClient
 
+
 ###
 # Globals
 ###
@@ -23,6 +24,7 @@ app = flask.Flask(__name__)
 # CONFIG = config.configuration()
 client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'], 27017)
 db = client.tododb
+
 
 ###
 # Pages
@@ -40,7 +42,7 @@ def index():
 @app.route("/_display")
 def _dispaly():
     app.logger.debug("ACP Brevet Disaplay")
-    return flask.render_template('display.html', items = list(db.todo.find()))
+    return flask.render_template('display.html', items = list(db.tododb.find()))
 
 
 @app.errorhandler(404)
@@ -82,21 +84,17 @@ def _calc_times():
 
 @app.route("/_submit", methods=['POST'])
 def _submit():
-    kml = request.form.getlist("km")
-    openl = request.form.getlist("open")
-    closel = request.form.getlist("close")
+    app.logger.debug("Got data to submit")
     db.tododb.drop()
-    app.logger.debug("Submit")
-    for i in range(len(kml)):
-        item = {
-            'km': kml[i],
-            'open': openl[i],
-            'close': closel[i]
+    for i in range(len(request.form.getlist('km'),)):
+        item_doc = {
+            'km': request.form.getlist('km'),
+            'open': request.form.getlist('open'),
+            'close': request.form.getlist('close')
         }
-
-    db.tododb.insert_one(item)
-
+    db.tododb.insert_one(item_doc)
     return redirect(url_for('index'))
+
 
 #############
 
