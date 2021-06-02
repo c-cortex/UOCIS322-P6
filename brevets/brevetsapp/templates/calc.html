@@ -23,8 +23,7 @@
          integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
          crossorigin="anonymous"></script>
       <!-- moment.js is the JavaScript equivalent of arrow.py -->
-      <script
-      src="{{ url_for('static', filename="js/moment.min.js") }}"></script>
+      <script src="{{ url_for('static', filename="js/moment.min.js") }}"></script>
    </head>
    <!-- Our own stylesheet -->
    <link rel="stylesheet" href="/static/css/calc.css" />
@@ -62,12 +61,12 @@
                   </select>
                </div>
                <!-- columns 1 to 4  -->
-               <div class="col-md-6">
+               <div class="col-md-4">
                   <label>Begins at</label>
                   <input type="datetime-local" name="begin_date" id="begin_date" value="2021-01-01T00:00" />
                </div>
-               <div>
-                 <button id="submit">Submit</button>
+               <div class="col-md-4">
+                 <button type="submit" id="submit">Submit</button>
                  <button id="display">Display</button>
                </div>
                <!-- columns 5 to 10 -->
@@ -136,8 +135,8 @@
               $.getJSON(TIME_CALC_URL, {km: km, length: length, date: date}).done(
                 function(data) {
                    var times = data.result;
-                   console.log("Got a response: ");
-                   console.log("Response.open = " + times.open);
+                   // console.log("Got a response: ");
+                   // console.log("Response.open = " + times.open);
                    // This part will automatically fill the open and close slots,
                    // so don't worry about those.
                    open_time_field.val(moment(times.open).format("YYYY-MM-DDTHH:mm"));
@@ -151,24 +150,23 @@
             }
 
 
-            $('#submit').click(
-                  function(){
 
-                      var control_entry = $(this).parents(".control")
-                      var km = control_entry.find("input[name='km']").val();
-                      var open = control_entry.find("input[name='open']").val();
-                      var close = control_entry.find("input[name='close']").val();
+            function _submit(control) {
+              var km = control.find("input[name='km']").val();
+              var open_time_field = control.find("input[name='open']");
+              var close_time_field = control.find("input[name='close']");
 
-                      $.getJSON(SUBMIT_URL, {km: km, open: open, close: close}).done(
-                          function(data) {
-                              console.log("Submited!");
-                          }
-                      ).fail(function(err){
-                          // In case you get an error...
-                          console.log("Error!");
-                          console.log(err);
-                      });
-                  });
+              $.getJSON(SUBMIT_URL, {km: km, open: open, close: close}).done(
+                function(data) {
+                   console.log("Data was recorded")
+                 }
+               ).fail(function(err){
+                 // In case you get an error...
+                 console.log("Error!");
+                 console.log(err);
+               });
+            }
+
 
 
             $('#display').click(
